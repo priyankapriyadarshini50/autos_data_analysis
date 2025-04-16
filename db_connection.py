@@ -2,6 +2,7 @@
 import pandas as pd
 from psycopg2 import connect
 from custome import DBsingletonError
+import settings
 
 class ConnectDataBase:
     '''
@@ -13,14 +14,6 @@ class ConnectDataBase:
 
     _instance = None
 
-    # def __new__(cls):
-    #     if cls._instance is None:
-    #         cls._instance = super().__new__(cls)
-    #         cls._instance.config = {'dbname': 'postgres',
-    #                     'user': 'postgres',
-    #                     'password': 'admin',
-    #                     'host': '127.0.0.1',
-    #                     'port': "5432"}
     @classmethod
     def get_db_connection(cls):
         if cls._instance is None:
@@ -33,11 +26,11 @@ class ConnectDataBase:
             raise DBsingletonError("connection already established in a singleton")
         # create connection obj
         self.conn = connect(
-            dbname = 'postgres',
-            user = 'postgres',
-            password = 'admin',
-            host = '127.0.0.1',
-            port = "5432"
+            dbname = settings.DBNAME,
+            user = settings.USERNAME,
+            password = settings.PASSWORD,
+            host = settings.HOST,
+            port = settings.PORT
             )
         #Create a cursor object
         self.cursor = self.conn.cursor()
