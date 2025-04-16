@@ -2,6 +2,7 @@ import pickle
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot
+import settings
 
 
 
@@ -17,8 +18,6 @@ class ImportCleaningDataSet:
         reading the dataset, statistical summary
         """
 
-        url = "https://archive.ics.uci.edu/ml/machine-learning-databases/autos/imports-85.data"
-
         headers = [
             "symboling", "normalized_losses", "make", "fuel_type", "aspiration", "num_of_doors",
             "body-style", "drive_wheels", "engine_location", "wheel_base", "length", "width",
@@ -27,7 +26,7 @@ class ImportCleaningDataSet:
             "city_mpg", "highway_mpg", "price" 
         ]
 
-        self.df = pd.read_csv(url, header=None)
+        self.df = pd.read_csv(settings.CAR_DATASET_URL, header=None)
         self.df.columns = headers
         print(self.df.shape)
         # returns statistical summary
@@ -46,10 +45,9 @@ class ImportCleaningDataSet:
     def save_the_modified_dataframe(self):
         '''
         save the modified data set to the local machine
+        preserve/save the modified data set
         '''
-        # preserve/save the modified data set
-        local_path = "C:/Users/priya/OneDrive/Documents/Home_learning_django/ML_NumPy_stack/autos/automobile.csv"
-        self.df.to_csv(local_path, index=False)
+        self.df.to_csv(settings.LOCAL_FILE_PATH, index=False)
  
     def pickle_dataframe(self):
         '''
