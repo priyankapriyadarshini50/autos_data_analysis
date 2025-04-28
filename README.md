@@ -7,11 +7,11 @@ engine-size and price etc.
 # raw data:
    |symboling| normalized_losses|make      |fuel_type| aspiration| num_of_doors|  ... |compression-ratio| horsepower| peak_rpm | city_mpg|highway_mpg|price
    |---------|------------------|----------|---------|-----------|-------------|------|-----------------|-----------|----------|---------|----------|---------|
-0          3                 ?  alfa-romero       gas        std          two  ...               9.0        111      5000        21           27    13495
-1          3                 ?  alfa-romero       gas        std          two  ...               9.0        111      5000        21           27    16500
-2          1                 ?  alfa-romero       gas        std          two  ...               9.0        154      5000        19           26    16500
-3          2               164         audi       gas        std         four  ...              10.0        102      5500        24           30    13950
-4          2               164         audi       gas        std         four  ...               8.0        115      5500        18           22    17450
+0  |       3 |               ?  |alfa-romero|     gas|       std |        two  |...   |           9.0   |    111    | 5000     |  21     |     27   |13495
+1  |       3 |               ?  |alfa-romero|     gas|       std |        two  |...   |           9.0   |    111    | 5000     |  21     |     27   |16500
+2  |       1 |               ?  |alfa-romero|     gas|       std |        two  |...   |           9.0   |    154    | 5000     |  19     |     26   |16500
+3  |       2 |             164  |      audi |     gas|       std |       four  |...   |          10.0   |    102    | 5500     |  24     |     30   |13950
+4  |       2 |             164  |      audi |     gas|       std |       four  |...   |           8.0   |    115    | 5500     |  18     |     22   |17450
 
 getting total number of null values based on columns:
 number of NaN values for the column normalized_losses : 41
@@ -19,33 +19,33 @@ number of NaN values for the column price : 4
 
 Updated the datatype to correct format:
 Data types assigned to pandas df=
-symboling               int64
-normalized_losses       int64
-make                   object
-fuel_type              object
-aspiration           category
-num_of_doors           object
-body-style             object
-drive_wheels           object
-engine_location        object
-wheel_base            float64
-length                float64
-width                 float64
-height                float64
-curb_weight             int64
-engine_type            object
-num_of_cylinders       object
-engine_size             int64
-fuel_system            object
-bore                  float64
-stroke                float64
-compression-ratio     float64
-horsepower            float64
-peak_rpm              float64
-city_mpg                int64
-highway_mpg             int64
-price                 float64
-dtype: object
+*symboling               int64
+*normalized_losses       int64
+*make                   object
+*fuel_type              object
+*aspiration           category
+*num_of_doors           object
+*body-style             object
+*drive_wheels           object
+*engine_location        object
+*wheel_base            float64
+*length                float64
+*width                 float64
+*height                float64
+*curb_weight             int64
+*engine_type            object
+*num_of_cylinders       object
+*engine_size             int64
+*fuel_system            object
+*bore                  float64
+*stroke                float64
+*compression-ratio     float64
+*horsepower            float64
+*peak_rpm              float64
+*city_mpg                int64
+*highway_mpg             int64
+*price                 float64
+*dtype: object
 
 The horsepower column data has been binned that provides better data visualization.
 ![Datavisualization of binned data](./static/images/data_binning_auto.png) 
