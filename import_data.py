@@ -5,13 +5,14 @@ from matplotlib import pyplot
 import settings
 
 
-
 class ImportCleaningDataSet:
-
+    '''
+    This class reads and cleaned the auto dataset and creates a pandas dataframe
+    '''
 
     def __init__(self, dataframe=None):
         self.df = dataframe
-    
+
     def reading_car_dataset(self):
         """
         Data cleaning Step1
@@ -28,19 +29,7 @@ class ImportCleaningDataSet:
 
         self.df = pd.read_csv(settings.CAR_DATASET_URL, header=None)
         self.df.columns = headers
-        print(self.df.shape)
-        # returns statistical summary
-        # print(self.df.describe()) # just includes numeric data types columns
-        # print(self.df.describe(include='all')) # include all data types objects(python string), int64, float64, datetime64
-        # print(df.describe(include=['object']))
-        # to get statictac value of some particular column
-        # print(self.df[['length', 'compression-ratio']].describe())
-
-        # provide data frame information such as columns and its data types and memory usage
-        # print(df.info())
-
-        # df=df._get_numeric_data() # create data table with numeric data
-        # print(self.df.head())
+        print(self.df.head())
 
     def save_the_modified_dataframe(self):
         '''
@@ -48,7 +37,7 @@ class ImportCleaningDataSet:
         preserve/save the modified data set
         '''
         self.df.to_csv(settings.LOCAL_FILE_PATH, index=False)
- 
+
     def pickle_dataframe(self):
         '''
         pickling the data frame
@@ -67,11 +56,7 @@ class ImportCleaningDataSet:
         dataframe.replace(missing_value, new_value)
 
         """
-        # mean = df["normalized-losses"].mean()
-        # df["normalized-losses"].replace(np.nan, mean)
         self.df.replace("?", np.nan, inplace=True)
-        # print(self.df.head(), self.df.shape)
-        print(self.df.info())
 
     def evaluate_and_deal_missing_data(self):
         '''
@@ -99,7 +84,6 @@ class ImportCleaningDataSet:
 
         avg_norm_loss = self.df["normalized_losses"].astype("float").mean(axis=0)
         print("Average of normalized_losses:", avg_norm_loss)
-        # self.df["normalized_losses"].replace(np.nan, avg_norm_loss, inplace=True)
         self.df.replace({"normalized_losses": {np.nan: avg_norm_loss}}, inplace=True)
 
         avg_bore=self.df['bore'].astype('float').mean(axis=0)
@@ -108,7 +92,6 @@ class ImportCleaningDataSet:
 
         # self.df["num_of_doors"].value_counts() # returns a dataframe with repeated data count
         door_data = self.df["num_of_doors"].value_counts().idxmax()
-        # self.df["num_of_doors"].replace(np.nan, door_data, inplace=True)
         self.df["num_of_doors"] = self.df["num_of_doors"].replace(np.nan, door_data)
 
         avg_stroke = self.df["stroke"].astype("float").mean(axis=0)
@@ -123,33 +106,26 @@ class ImportCleaningDataSet:
         print("Average of peak_rpm:", avg_peak_rpm)
         self.df.replace({"peak_rpm": {np.nan: avg_peak_rpm}}, inplace=True)
 
-        # drop the missing value
+        # drop the missing value in price column
         self.df.dropna(subset=["price"], axis=0, inplace=True) # drops the rows which has NaN data axis=1 drops the entire column
-
-        # inplace=True, it will update the dataframe
-        # self.df.drop(['Unnamed: 0', 'Unnamed: 0.1'], axis=1, inplace=True)
-        # reset index, because we droped two rows
-        # df.reset_index(drop=True, inplace=True)
 
     def convert_to_proper_datatype(self):
         '''
         Data cleaning Step4
-        data cleaning is checking and making sure that all data is in the correct format (int, float, text or other).
+        data cleaning is checking and making sure that all data is 
+        in the correct format (int, float, text or other).
         '''
 
-        self.df[["bore", "stroke", "price", "peak_rpm", "horsepower"]] = self.df[["bore", "stroke", "price", "peak_rpm", "horsepower"]].astype("float")
+        self.df[["bore", "stroke", "price", 
+                 "peak_rpm", "horsepower"]] = self.df[["bore", "stroke", "price", 
+                                                       "peak_rpm", "horsepower"]].astype("float")
         self.df[["normalized_losses"]] = self.df[["normalized_losses"]].astype("int")
-        print(f"Data types assigned by pandas={self.df.dtypes}")
-        # print(f"Data type of price column={self.df['price'].dtypes}")
-        # convert date obj to datetime obj
-        # self.df['date'] = pd.to_datetime(self.df['date'])
-        # self.df.corr()['price'].sort_values()
-        # self.df.corr() # its not working as all the coulumns are not numeric
 
         # unnique count provides the no of unique value in each column
-        unique_counts = pd.DataFrame.from_records([(col, self.df[col].nunique()) for col in self.df.columns],
-                          columns=['Column_Name', 'Num_Unique']).sort_values(by=['Num_Unique'])
-        
+        unique_counts = pd.DataFrame.from_records(
+            [(col, self.df[col].nunique()) for col in self.df.columns],
+            columns=['Column_Name', 'Num_Unique']).sort_values(by=['Num_Unique'])
+
         print(f"unique data in each column: \n {unique_counts}")
 
         # aspiration has std and turbo categorial data
@@ -157,6 +133,7 @@ class ImportCleaningDataSet:
         # and will use less memory
 
         self.df["aspiration"] = self.df["aspiration"].astype("category")
+        print(f"Data types assigned to pandas df={self.df.dtypes}")
 
     def car_data_standardization(self):
         '''
@@ -203,7 +180,7 @@ class ImportCleaningDataSet:
         linspace(start_value, end_value, numbers_generated)
         '''
         bins = np.linspace(min(self.df["horsepower"]), max(self.df["horsepower"]), 4)
-        print(bins)
+
         group_names = ['Low', 'Medium', 'High']
         self.df['horsepower-binned'] = pd.cut(self.df['horsepower'], bins, labels=group_names, include_lowest=True )
         print(self.df[['horsepower','horsepower-binned']].head())
@@ -219,7 +196,6 @@ class ImportCleaningDataSet:
         """plot a histogram our of categorial data"""
         
         pyplot.bar(groups, self.df[col].value_counts())
-        # print(kwargs) # {'xlabel': 'horsepower', 'ylabel': 'count', 'title': 'horsepower bins'}
         xlabel = kwargs.get('xlabel')
         ylabel = kwargs.get('ylabel')
         title = kwargs.get('title')
@@ -237,16 +213,15 @@ class ImportCleaningDataSet:
         e.g. fuel_type col has gas and diesel so gas and diesel becomes col with True/False data 
         '''
         dummy_variable_1 = pd.get_dummies(self.df["fuel_type"])
-        # print(dummy_variable_1.head())
 
-        dummy_variable_1.rename(columns={'gas':'fuel-type-gas', 'diesel':'fuel-type-diesel'}, inplace=True)
-        # print(dummy_variable_1.head())
+        dummy_variable_1.rename(
+            columns={'gas':'fuel-type-gas', 'diesel':'fuel-type-diesel'}, inplace=True)
 
-        # merge data frame "df" and "dummy_variable_1" 
+        # merge data frame "df" and "dummy_variable_1"
         self.df = pd.concat([self.df, dummy_variable_1], axis=1)
-        # print(self.df.head(), self.df.shape)
+        print(self.df.head(), self.df.shape)
         # print(f"Data info after cleaning={self.df.info()}")
-    ######################################################################
+
     def misellenious_correlation(self):
         '''
         Helps to find the correlation between the columns in the dataframe
@@ -258,8 +233,9 @@ class ImportCleaningDataSet:
         # print(result_df)
 
         # Find the correlation between the following columns: bore, stroke, compression-ratio, and horsepower.
-        corr_between_some_imp_col = self.df[['bore','stroke','compression-ratio','horsepower', 'engine_size', 'price']].corr()
-        # print(corr_between_some_imp_col)
+        corr_between_some_imp_col = self.df[['bore','stroke',
+                                             'compression-ratio','horsepower', 'engine_size', 'price']].corr()
+        print(corr_between_some_imp_col)
 
         # computes pearson correlation value
         corre = self.df['horsepower'].corr(self.df['price'])

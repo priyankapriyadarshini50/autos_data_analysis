@@ -1,4 +1,4 @@
-#from sqlite3 import connect
+
 import pandas as pd
 from psycopg2 import connect
 from custome import DBsingletonError
@@ -34,7 +34,7 @@ class ConnectDataBase:
             )
         #Create a cursor object
         self.cursor = self.conn.cursor()
-  
+
     def create_table(self, *args, tablename=None):
         '''execute create table sql command'''
         if tablename and args:
@@ -46,13 +46,14 @@ class ConnectDataBase:
                     {args[5]} CHAR(3));"""
             self.cursor.execute(query)
 
-    def insert_into_table(self, data):
-        for d in data:
+    def insert_into_table(self, input_data):
+        '''insert data in the table'''
+        for d in input_data:
             self.cursor.execute_query(f"""INSERT INTO INSTRUCTION (ID, FNAME, LNAME, CITY, CCODE)
                             VALUES{d}
                             ON CONFLICT (ID)
                             DO NOTHING""")
-            
+
     def retrieve_data(self, tablename=None):
         '''Retrieve data from db table'''
         if tablename:
@@ -69,17 +70,19 @@ class ConnectDataBase:
             print(dataframe)
 
     def retrieve_data_df(self, tablename):
+        '''retrieve data from table
+        and convert to dataframe'''
         df = pd.read_sql_query(f"select * from {tablename}", self.conn)
-        print(df)
 
-    
+        return df
+
     def execute_query(self, query):
+        '''execute any sql queries'''
 
         #Run queries
         self.cursor.execute(query)
-        print('Table is ready')
-        # results = self.cursor.fetchall()
-        self.conn.commit()
+        results = self.cursor.fetchall()
+        return results
 
     def close_connection(self):
         '''Close the database connection
@@ -101,7 +104,7 @@ if __name__ == '__main__':
                 (3, 'Hima', 'Vasudevan', 'Chicago', 'US')]
         db_ob1.retrieve_data("instruction")
         # db_ob1.retrieve_data_df("instruction")
-    except Exception as e:
+    except AttributeError as e:
         print(f"ERROR={e}")
     finally:
         db_ob1.close_connection()
