@@ -1,16 +1,17 @@
-Auto Data Analysis Project
+## Auto Data Analysis Project
 This project provides the correlation between the different parameters of auto dataset. It reads the data from a csv file
 and prepare data for analysis by cleaning and replacing missing values, standardize and normalize the data, binning the data
 for visualization, converting categorial to columns and finding the correlation between the variable such as horsepower and price,
 engine-size and price etc.
 
-raw data:
-   symboling normalized_losses         make fuel_type aspiration num_of_doors  ... compression-ratio horsepower peak_rpm  city_mpg  highway_mpg  price
-0          3                 ?  alfa-romero       gas        std          two  ...               9.0        111     5000        21           27  13495
-1          3                 ?  alfa-romero       gas        std          two  ...               9.0        111     5000        21           27  16500
-2          1                 ?  alfa-romero       gas        std          two  ...               9.0        154     5000        19           26  16500
-3          2               164         audi       gas        std         four  ...              10.0        102     5500        24           30  13950
-4          2               164         audi       gas        std         four  ...               8.0        115     5500        18           22  17450
+# raw data:
+   |symboling| normalized_losses|make      |fuel_type| aspiration| num_of_doors|  ... |compression-ratio| horsepower| peak_rpm | city_mpg|highway_mpg|price
+   |---------|------------------|----------|---------|-----------|-------------|------|-----------------|-----------|----------|---------|----------|---------|
+0          3                 ?  alfa-romero       gas        std          two  ...               9.0        111      5000        21           27    13495
+1          3                 ?  alfa-romero       gas        std          two  ...               9.0        111      5000        21           27    16500
+2          1                 ?  alfa-romero       gas        std          two  ...               9.0        154      5000        19           26    16500
+3          2               164         audi       gas        std         four  ...              10.0        102      5500        24           30    13950
+4          2               164         audi       gas        std         four  ...               8.0        115      5500        18           22    17450
 
 getting total number of null values based on columns:
 number of NaN values for the column normalized_losses : 41
@@ -60,3 +61,5 @@ price              0.543155  0.082269           0.071107    0.809575     0.87233
 
 From the above table, we can find out there is a positive correlation between engine size and price,
 horsepower and size.
+
+db_connection is a script which gets data from db table using sql query
