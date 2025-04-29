@@ -5,6 +5,8 @@ for visualization, converting categorial to columns and finding the correlation 
 engine-size and price etc.
 
 ### raw data:
+CAR_DATASET_URL="https://archive.ics.uci.edu/ml/machine-learning-databases/autos/imports-85.data"  
+
    |symboling| normalized_losses|make      |fuel_type| aspiration| num_of_doors|  ... |compression-ratio| horsepower| peak_rpm | city_mpg|highway_mpg|price
    |---------|------------------|----------|---------|-----------|-------------|------|-----------------|-----------|----------|---------|----------|---------|
 0  |       3 |               ?  |alfa-romero|     gas|       std |        two  |...   |           9.0   |    111    | 5000     |  21     |     27   |13495
@@ -50,7 +52,8 @@ dtype: object
 *The horsepower column data has been binned that provides better data visualization.*  
 <p align="left">
   <img src="./static/images/data_binning_auto.png" alt="Preview" width="400">
-</p>
+</p>  
+This histogram shows that most of the cars in the data set has Low horsepower.
  
 
 After data cleaning, the correlation data for some columns:
@@ -66,4 +69,20 @@ After data cleaning, the correlation data for some columns:
 From the above table, we can find out there is a positive correlation between engine size and price,
 horsepower and size.  
 
-db_connection is a script which gets data from db table using sql query  
+db_connection is a script which gets data from db table using sql query.
+### Data Visualization  
+<p align="left">
+  <img src="./static/images/Figure_1_scattered_plot.png" alt="Preview" width="400">
+</p>  
+The above scattered regression plot shows that "Engine size" as potential predictor variable of "price"
+
+<p align="left">
+  <img src="./static/images/Figure_3_box_plot.png" alt="Preview" width="400">
+</p>  
+The above box plot shows the relationship between categorical variables "body-style" and "price"  
+
+<p align="left">
+  <img src="./static/images/Figure_2_heatmap.png" alt="Preview" width="400">
+</p>  
+The above box plot shows the relationship between categorical variables "body-style", "wheel-base" and "price"
+We can see cars with convertible body style and rwd wheel-base has maximum price.

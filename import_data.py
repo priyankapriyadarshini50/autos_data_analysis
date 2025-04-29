@@ -48,6 +48,17 @@ class ImportCleaningDataSet:
         except pickle.PicklingError as e:
             print(f"Pickling Errror={e}")
 
+    def find_missing_data_with_col(self):
+        '''displays columns with no of missing data'''
+        missing_data = self.df.isnull()
+
+        # from below code we can find out which column has how many missing data
+        for column in missing_data.columns.values.tolist():
+            print(column)
+            print (missing_data[column].value_counts())
+            print("")
+
+
     def identify_handle_missing_data(self):
         """
         Data cleaning Step2
@@ -73,14 +84,6 @@ class ImportCleaningDataSet:
         '''
         print("number of NaN values for the column normalized_losses :", self.df["normalized_losses"].isnull().sum())
         print("number of NaN values for the column price :", self.df['price'].isnull().sum())
-        missing_data = self.df.isnull()
-        # print(missing_data.columns.values.tolist())
-
-        # from below code we can find out which column has how many missing data
-        # for column in missing_data.columns.values.tolist():
-        #     print(column)
-        #     print (missing_data[column].value_counts())
-        #     print("")
 
         avg_norm_loss = self.df["normalized_losses"].astype("float").mean(axis=0)
         print("Average of normalized_losses:", avg_norm_loss)
@@ -107,7 +110,8 @@ class ImportCleaningDataSet:
         self.df.replace({"peak_rpm": {np.nan: avg_peak_rpm}}, inplace=True)
 
         # drop the missing value in price column
-        self.df.dropna(subset=["price"], axis=0, inplace=True) # drops the rows which has NaN data axis=1 drops the entire column
+        # drops the rows which has NaN data axis=1 drops the entire column
+        self.df.dropna(subset=["price"], axis=0, inplace=True) 
 
     def convert_to_proper_datatype(self):
         '''
