@@ -68,6 +68,7 @@ class ImportCleaningDataSet:
 
         """
         self.df.replace("?", np.nan, inplace=True)
+        # self.df.fillna()
 
     def evaluate_and_deal_missing_data(self):
         '''
@@ -87,11 +88,13 @@ class ImportCleaningDataSet:
 
         avg_norm_loss = self.df["normalized_losses"].astype("float").mean(axis=0)
         print("Average of normalized_losses:", avg_norm_loss)
-        self.df.replace({"normalized_losses": {np.nan: avg_norm_loss}}, inplace=True)
+        # self.df.replace({"normalized_losses": {np.nan: avg_norm_loss}}, inplace=True)
+        self.df['normalized_losses'] = self.df['normalized_losses'].fillna(avg_norm_loss)
 
         avg_bore=self.df['bore'].astype('float').mean(axis=0)
         print("Average of bore:", avg_bore)
-        self.df['bore'] = self.df['bore'].replace(np.nan, avg_bore)
+        # self.df['bore'] = self.df['bore'].replace(np.nan, avg_bore)
+        self.df['bore'] = self.df['bore'].fillna(avg_bore)
 
         # self.df["num_of_doors"].value_counts() # returns a dataframe with repeated data count
         door_data = self.df["num_of_doors"].value_counts().idxmax()
@@ -111,7 +114,8 @@ class ImportCleaningDataSet:
 
         # drop the missing value in price column
         # drops the rows which has NaN data axis=1 drops the entire column
-        self.df.dropna(subset=["price"], axis=0, inplace=True) 
+        self.df.dropna(subset=["price"], axis=0, inplace=True)
+        print("after dropping", self.df.shape)
 
     def convert_to_proper_datatype(self):
         '''
@@ -136,6 +140,7 @@ class ImportCleaningDataSet:
         # lets convert it to category datatype, so that it would perform fast
         # and will use less memory
 
+        self.df["fuel_type"] = self.df["fuel_type"].astype("category")
         self.df["aspiration"] = self.df["aspiration"].astype("category")
         print(f"Data types assigned to pandas df={self.df.dtypes}")
 
@@ -225,6 +230,13 @@ class ImportCleaningDataSet:
         self.df = pd.concat([self.df, dummy_variable_1], axis=1)
         print(self.df.head(), self.df.shape)
         # print(f"Data info after cleaning={self.df.info()}")
+    
+    def check_no_of_categorial_data(self):
+        '''
+        find out the no of entries for fuel_type categorial data
+        '''
+        grouped = self.df.groupby('fuel_type').count()
+        print(grouped)
 
     def misellenious_correlation(self):
         '''
@@ -237,7 +249,7 @@ class ImportCleaningDataSet:
         # print(result_df)
 
         # Find the correlation between the following columns: bore, stroke, compression-ratio, and horsepower.
-        corr_between_some_imp_col = self.df[['bore','stroke',
+        corr_between_some_imp_col = self.df[['bore','stroke', 'fuel-type-diesel', 'fuel-type-gas',
                                              'compression-ratio','horsepower', 'engine_size', 'price']].corr()
         print(corr_between_some_imp_col)
 
@@ -259,4 +271,5 @@ if __name__== '__main__':
     ds.car_data_binning()
     ds.categorial_to_indicative()
     ds.misellenious_correlation()
+    ds.check_no_of_categorial_data()
     ds.save_the_modified_dataframe()

@@ -9,7 +9,7 @@ class ConnectDataBase:
     This is a singleton class that ensures a class has only one instance and provide a global point of access.
     It is used for objects that need to be shared accross the entire application such as logging, database connections
     and configuration settings.
-    it saves memory usage
+    it saves memory usage and good for development environment
     '''
 
     _instance = None
@@ -35,54 +35,49 @@ class ConnectDataBase:
         #Create a cursor object
         self.cursor = self.conn.cursor()
 
-    def create_table(self, *args, tablename=None):
+    def create_table(self, *args):
         '''execute create table sql command'''
-        if tablename and args:
-            query = f"""CREATE TABLE {tablename}(
-                    {args[0]} INT PRIMARY KEY NOT NULL,
-                    {args[1]} VARCHAR(15),
-                    {args[2]} VARCHAR(30),
-                    {args[4]} VARCHAR(10),
-                    {args[5]} CHAR(3));"""
-            self.cursor.execute(query)
+        query = """CREATE TABLE instruction (
+                id INT PRIMARY KEY NOT NULL,
+                fname VARCHAR(15),
+                lname VARCHAR(30),
+                city VARCHAR(10),
+                ccode CHAR(3));"""
+        self.cursor.execute(query)
 
     def insert_into_table(self, input_data):
         '''insert data in the table'''
         for d in input_data:
-            self.cursor.execute_query(f"""INSERT INTO INSTRUCTION (ID, FNAME, LNAME, CITY, CCODE)
-                            VALUES{d}
-                            ON CONFLICT (ID)
-                            DO NOTHING""")
+            query = """INSERT INTO INSTRUCTION (ID, FNAME, LNAME, CITY, CCODE)
+                        VALUES (%s, %s, %s, %s, %s)
+                        ON CONFLICT (ID)
+                        DO NOTHING"""
+            #Run queries
+            self.cursor.execute(query, d)
+            self.conn.commit()
 
-    def retrieve_data(self, tablename=None):
+
+    def retrieve_data(self):
         '''Retrieve data from db table'''
-        if tablename:
-            query = f""" SELECT * FROM {tablename};"""
-            self.cursor.execute(query)
-            rs = self.cursor.fetchall()
-            print(rs)
 
-            # if want to fetch 2 rows
-            # rs = self.cursor.fetchmany(2)
-            # print(rs)
-            # can covert as result set to df
-            dataframe = pd.DataFrame(rs)
-            print(dataframe)
+        query = "SELECT * FROM instruction;"
+        self.cursor.execute(query)
+        rs = self.cursor.fetchall()
+        print(rs)
 
-    def retrieve_data_df(self, tablename):
+        # if want to fetch 2 rows
+        # rs = self.cursor.fetchmany(2)
+        # print(rs)
+        # can covert as result set to df
+        dataframe = pd.DataFrame(rs)
+        print(dataframe)
+
+    def retrieve_data_df(self,):
         '''retrieve data from table
         and convert to dataframe'''
-        df = pd.read_sql_query(f"select * from {tablename}", self.conn)
+        df = pd.read_sql_query(f"select * from instruction", self.conn)
 
-        return df
-
-    def execute_query(self, query):
-        '''execute any sql queries'''
-
-        #Run queries
-        self.cursor.execute(query)
-        results = self.cursor.fetchall()
-        return results
+        return df      
 
     def close_connection(self):
         '''Close the database connection
@@ -102,9 +97,9 @@ if __name__ == '__main__':
 
         data = [(1, 'Rav', 'Ahuja', 'TORONTO', 'CA'), (2, 'Raul', 'Chong', 'Markham', 'CA'), 
                 (3, 'Hima', 'Vasudevan', 'Chicago', 'US')]
-        db_ob1.retrieve_data("instruction")
+        db_ob1.retrieve_data()
         # db_ob1.retrieve_data_df("instruction")
     except AttributeError as e:
-        print(f"ERROR={e}")
+        print(f"DataBase ERROR={e}")
     finally:
         db_ob1.close_connection()
